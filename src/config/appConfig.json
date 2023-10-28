@@ -1,0 +1,10 @@
+{
+  "cronSchedule": "*/10 * * * * *",
+  "weatherSeverity": "Moderate",
+  "dbHost": "localhost",
+  "demo": {
+    "logTrucksForAlerting": true,
+    "logEmailData": false,
+    "logEmailResult": false
+  }
+}

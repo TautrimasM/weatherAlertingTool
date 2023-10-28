@@ -1,0 +1,10 @@
+{
+  "cronSchedule": "0 0 6 * * * *",
+  "weatherSeverity": "Severe",
+  "dbHost": "db",
+  "demo": {
+    "logTrucksForAlerting": false,
+    "logEmailData": false,
+    "logEmailResult": false
+  }
+}
