@@ -8,8 +8,6 @@ services:
       target: production
     depends_on:
       - db
-    ports:
-      - ${SMTP_PORT}:${SMTP_PORT}
 
   db:
     container_name: postgres
