@@ -36,7 +36,7 @@ async function getTruckData(): Promise<TruckData[]> {
     return trucks;
   } catch (error) {
     console.error("Error retrieving truck data:", error);
-    throw error;
+    return [];
   }
 }
 
