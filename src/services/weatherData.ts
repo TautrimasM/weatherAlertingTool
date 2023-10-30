@@ -9,7 +9,10 @@ import {
 import { WeatherAlert } from "../types/weather";
 
 async function getTruckData(): Promise<TruckData[]> {
-  db.connect();
+  const success = await db.connect();
+  if (!success){
+    return [];
+  }
   try {
     const query = `
         SELECT
@@ -40,40 +43,28 @@ async function getTruckData(): Promise<TruckData[]> {
   }
 }
 
-async function fetchStateInfo(
-  latitude: number,
-  longitude: number
-): Promise<StateData> {
-  try {
-    const response = await axios.get(
-      `https://api.weather.gov/points/${latitude},${longitude}`
-    );
-    const stateInfo: StateData = {
-      state: response.data.properties.relativeLocation.properties.state,
-      zone: response.data.properties.forecastZone,
-    };
-
-    return stateInfo;
-  } catch (error) {
-    console.error("Error fetching state information:", error);
-    return { state: "", zone: "" };
-  }
-}
-
 async function getTruckDataWithStates(
   truckData: TruckData[]
 ): Promise<TruckDataWithState[]> {
   const truckDataWithStates: TruckDataWithState[] = [];
 
   for (const item of truckData) {
-    const stateData = await fetchStateInfo(item.latitude, item.longitude);
+    try{
+       const response = await axios.get(
+      `https://api.weather.gov/points/${item.latitude},${item.longitude}`
+    );
+    const stateData: StateData = {
+      state: response.data.properties.relativeLocation.properties.state,
+      zone: response.data.properties.forecastZone,
+    };
     truckDataWithStates.push({
       ...item,
       state: stateData.state,
       zone: stateData.zone,
     });
+    }
+    catch{}
   }
-
   return truckDataWithStates;
 }
 
@@ -150,7 +141,15 @@ async function getWeatherAlertsForTrucks(
   severity: string
 ): Promise<TrucksForAlerting[]> {
   const truckData = await getTruckData();
+  if(truckData.length == 0 ){
+    return [];
+  }
+
   const truckDataWithStates = await getTruckDataWithStates(truckData);
+  if(truckDataWithStates.length == 0 ){
+    return [];
+  }
+
   const distinctStates = Array.from(
     new Set(truckDataWithStates.map((truck) => truck.state))
   );
@@ -158,6 +157,9 @@ async function getWeatherAlertsForTrucks(
     distinctStates,
     severity
   );
+  if(Object.keys.length == 0 ){
+    return [];
+  }  
 
   const trucksForAlerting = getTruckDataWithCommonAlerts(
     truckDataWithStates,

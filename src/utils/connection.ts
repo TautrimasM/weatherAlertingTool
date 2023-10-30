@@ -14,14 +14,14 @@ const dbConfig = {
 
 let client: Client;
 
-async function connect() {
+async function connect(): Promise<boolean> {
   let retries = 5;
   while (retries) {
     try {
       client = new Client(dbConfig);
       await client.connect();
       console.log("Connected to PostgreSQL");
-      break;
+      return true;
     } catch (error) {
       console.error("Error connecting to PostgreSQL:", error);
       retries--;
@@ -29,6 +29,7 @@ async function connect() {
       await new Promise((res) => setTimeout(res, 5000));
     }
   }
+  return false;
 }
 
 async function disconnect() {
@@ -36,7 +37,7 @@ async function disconnect() {
     await client.end();
     console.log("Disconnected from PostgreSQL");
   } else {
-    console.log("Tere was no connection to PostgreSQL");
+    console.log("There was no connection to PostgreSQL");
   }
 }
 

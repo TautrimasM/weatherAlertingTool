@@ -10,6 +10,9 @@ export async function alertDrivers(severity: string) {
   if (config.demo.logTrucksForAlerting) {
     console.log(trucksForAlerting);
   }
+  if(trucksForAlerting.length == 0){
+    return;
+  }
 
   const emailData = generateEmailData(trucksForAlerting);
   if (config.demo.logEmailData) {
